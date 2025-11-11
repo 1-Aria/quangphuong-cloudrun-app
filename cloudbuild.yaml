@@ -1,31 +1,13 @@
-substitutions:
-  _SERVICE_NAME: quangphuong-cloudrun-app
-  _REGION: asia-southeast1
-  _REPO: cloud-run-artifacts
-
 steps:
-  # 1️⃣ Build the image
-  - name: 'gcr.io/cloud-builders/docker'
-    id: build
+  - name: 'gcr.io/cloud-builders/gcloud'
     args: [
-      'build',
-      '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
+      'builds', 'submit',
+      '--tag', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
       '.'
     ]
 
-  # 2️⃣ Push the image
-  - name: 'gcr.io/cloud-builders/docker'
-    id: push
-    waitFor: ['build']
-    args: [
-      'push',
-      '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
-    ]
-
-  # 3️⃣ Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: deploy
-    waitFor: ['push']
+    waitFor: ['-']
     entrypoint: 'gcloud'
     args: [
       'run', 'deploy', '${_SERVICE_NAME}',
@@ -35,9 +17,3 @@ steps:
       '--allow-unauthenticated',
       '--quiet'
     ]
-
-images:
-  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
-
-options:
-  logging: CLOUD_LOGGING_ONLY
