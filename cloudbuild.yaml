@@ -4,40 +4,37 @@ substitutions:
   _REPO: cloud-run-artifacts
 
 steps:
-  # 1️⃣ Build the container image
+  # 1️⃣ Build the image
   - name: 'gcr.io/cloud-builders/docker'
-    id: build-image
-    args:
-      [
-        'build',
-        '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
-        '.'
-      ]
+    id: build
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
+      '.'
+    ]
 
-  # 2️⃣ Push the image to Artifact Registry
+  # 2️⃣ Push the image
   - name: 'gcr.io/cloud-builders/docker'
-    id: push-image
-    waitFor: ['build-image']
-    args:
-      [
-        'push',
-        '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
-      ]
+    id: push
+    waitFor: ['build']
+    args: [
+      'push',
+      '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
+    ]
 
   # 3️⃣ Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: deploy
-    waitFor: ['push-image']
+    waitFor: ['push']
     entrypoint: 'gcloud'
-    args:
-      [
-        'run', 'deploy', '${_SERVICE_NAME}',
-        '--image', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
-        '--region', '${_REGION}',
-        '--platform', 'managed',
-        '--allow-unauthenticated',
-        '--quiet'
-      ]
+    args: [
+      'run', 'deploy', '${_SERVICE_NAME}',
+      '--image', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
+      '--region', '${_REGION}',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+      '--quiet'
+    ]
 
 images:
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
