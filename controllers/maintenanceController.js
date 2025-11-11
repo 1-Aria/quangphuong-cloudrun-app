@@ -1,4 +1,4 @@
-import { db } from "../firebase.js";
+import { db } from "../src/config/firebase.js";
 import { uploadFile } from "../utils/storageUtils.js";
 
 export const handleMaintenanceAction = async (req, res) => {
