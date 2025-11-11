@@ -11,13 +11,12 @@ steps:
       [
         'build',
         '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
-        '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:latest',
         '.'
       ]
 
-  # 2️⃣ Push both tags to Artifact Registry
+  # 2️⃣ Push the image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    id: push-short-sha
+    id: push-image
     waitFor: ['build-image']
     args:
       [
@@ -25,19 +24,10 @@ steps:
         '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
       ]
 
-  - name: 'gcr.io/cloud-builders/docker'
-    id: push-latest
-    waitFor: ['build-image']
-    args:
-      [
-        'push',
-        '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:latest'
-      ]
-
-  # 3️⃣ Deploy the image to Cloud Run
+  # 3️⃣ Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: deploy-to-cloud-run
-    waitFor: ['push-short-sha', 'push-latest']
+    id: deploy
+    waitFor: ['push-image']
     entrypoint: 'gcloud'
     args:
       [
@@ -51,7 +41,6 @@ steps:
 
 images:
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
-  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
