@@ -38,9 +38,6 @@ steps:
         '--quiet'
       ]
 
-# Optional: keep build logs for debugging
-logsBucket: 'gs://$PROJECT_ID-cloudbuild-logs'
-
 # Optional: automatically tag the latest build
 images:
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
