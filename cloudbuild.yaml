@@ -37,7 +37,7 @@ steps:
   # 3️⃣ Deploy the image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: deploy-to-cloud-run
-    waitFor: ['push-short-sha']
+    waitFor: ['push-short-sha', 'push-latest']
     entrypoint: 'gcloud'
     args:
       [
