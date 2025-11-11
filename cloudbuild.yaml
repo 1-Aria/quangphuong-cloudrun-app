@@ -1,28 +1,31 @@
-# Use Cloud Build to build, push, and deploy your Cloud Run app automatically.
-
-# Variables (replace these with your own if needed)
 substitutions:
   _SERVICE_NAME: quangphuong-cloudrun-app
   _REGION: asia-southeast1
   _REPO: cloud-run-artifacts
 
 steps:
-  # 1️⃣ Build the container image using Docker with caching
+  # 1️⃣ Build the container image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'build',
         '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA',
-        '--cache-from', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:latest',
+        '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:latest',
         '.'
       ]
 
-  # 2️⃣ Push the image to Artifact Registry
+  # 2️⃣ Push both tags to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'push',
         '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
+      ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:latest'
       ]
 
   # 3️⃣ Deploy the image to Cloud Run
@@ -38,7 +41,6 @@ steps:
         '--quiet'
       ]
 
-# Optional: automatically tag the latest build
 images:
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:$SHORT_SHA'
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE_NAME}:latest'
