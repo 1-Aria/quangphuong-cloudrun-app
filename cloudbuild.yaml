@@ -1,5 +1,5 @@
 substitutions:
-  _SERVICE_NAME: quangphuong-cloudrun-app
+  _SERVICE_NAME: quangphuong
   _REGION: asia-southeast1
   _REPO: cloud-run-artifacts
 
