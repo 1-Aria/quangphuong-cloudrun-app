@@ -1,19 +1,32 @@
 {
   "name": "quangphuong-cloudrun-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "CMMS Backend API for Quang Phuong",
   "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=admin/tests/unit",
+    "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=admin/tests/integration",
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=admin/tests/e2e",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:all": "node admin/run-tests.js"
   },
-  "keywords": [],
+  "keywords": ["cmms", "maintenance", "work-order", "inventory"],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "firebase-admin": "^13.6.0"
+    "firebase-admin": "^13.6.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "@faker-js/faker": "^9.3.0",
+    "@types/jest": "^29.5.0"
   }
 }

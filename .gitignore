@@ -1,3 +1,13 @@
 node_modules
+admin/service-account.json
+admin/zalo-account.js
+admin/test-reports
 .env
 npm-debug.log
+README.md
+coverage/
+*.log
+testing-plan.md
+zalo-appscript.md
+admin
+nul
